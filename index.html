@@ -231,7 +231,7 @@ async function fetchAll(force){
   try{
     const d=await getJ({action:"rl_timeline",days:DAYS,nocache:force?"1":"0"});
     if(!d||!d.ok){ if(d&&(d.error==="unauthorized"||d.error==="auth")){ clearCreds(); showGate("ログインの有効期限が切れました。もう一度ログインしてください"); } else $("meta").textContent="取得エラー: "+(d&&d.error||"不明"); return; }
-    DATA=d; STAFF=d.staff||STAFF;
+    DATA=d; STAFF=d.staff||STAFF; try{ localStorage.setItem("hayazai_staff",JSON.stringify(STAFF)); }catch(e){}
     try{ localStorage.setItem(CACHE_KEY,JSON.stringify(d)); }catch(e){}
     render();
     $("meta").textContent="取得 "+fmtTs(d.fetchedAt)+"（"+d.days+"日分・"+d.rows.length+"件）";
