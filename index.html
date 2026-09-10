@@ -296,7 +296,12 @@ function dupGroups(rows){
       const known=new Set(g.map(x=>x.who).filter(Boolean));
       if(known.size>=2) return true;
       const unk=g.filter(x=>!x.who); if(!unk.length) return false;
-      for(let i=0;i<g.length;i++) for(let j=i+1;j<g.length;j++){ if((!g[i].who||!g[j].who)&&(g[i].who!==g[j].who||!g[i].who)&&similar(g[i].subject,g[j].subject)) return true; }
+      for(let i=0;i<g.length;i++) for(let j=i+1;j<g.length;j++){
+        if(!(!g[i].who||!g[j].who)) continue;
+        // 同じ件名を15分以内に再送したものは「送り直し」とみなして重複扱いしない
+        if(subjKey(g[i].subject)===subjKey(g[j].subject)&&Math.abs(new Date(g[j].ts)-new Date(g[i].ts))<15*60000) continue;
+        if(similar(g[i].subject,g[j].subject)) return true;
+      }
       return false;
     };
     const flush=()=>{ if(g.length>=2&&judge(g)) out.push(g); g=[]; };
