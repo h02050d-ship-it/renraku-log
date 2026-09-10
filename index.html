@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>やりとりログ | 林材木店</title>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+<link rel="dns-prefetch" href="https://script.google.com">
+<link rel="dns-prefetch" href="https://script.googleusercontent.com">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f766e'/><text x='51' y='46.5' font-size='68' text-anchor='middle' dominant-baseline='central' fill='white' font-family='Meiryo,sans-serif' font-weight='700'>録</text></svg>">
+<link rel="apple-touch-icon" href="favicon.svg">
+<meta name="apple-mobile-web-app-title" content="やりとりログ">
+<meta name="theme-color" content="#0f766e">
+<script src="https://h02050d-ship-it.github.io/tool-portal/tu.js" defer></script>
+<style>
+:root{--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--bg:#f5f7fa;--card:#fff;--pri:#0f766e;--pri2:#115e59;--red:#b91c1c;--redbg:#fee2e2;--green:#047857;--greenbg:#d1fae5;--amber:#b45309;--amberbg:#fef3c7;--blue:#1d4ed8;--bluebg:#dbeafe}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Meiryo UI","Segoe UI","Hiragino Sans","Noto Sans JP",sans-serif;font-size:14px;line-height:1.5}
+a{color:var(--blue)}
+button{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ink)}
+.wrap{max-width:1500px;margin:0 auto;padding:12px 16px 60px}
+.hdr{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 0 10px;border-bottom:2px solid var(--pri)}
+.logo{width:34px;height:34px;border-radius:8px;background:var(--pri);color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center;flex:none}
+.hdr h1{font-size:19px;margin:0;font-weight:700}
+.hdr .meta{color:var(--sub);font-size:12.5px}
+.hdr .sp{flex:1}
+.btn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 12px;font-size:13px;color:var(--ink)}
+.btn:hover{background:#f3f4f6}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+.btn.pri:hover{background:var(--pri2)}
+.btn.danger{color:var(--red);border-color:#fca5a5}
+.btn:disabled{opacity:.5;cursor:default}
+select.ctl,input.ctl{border:1px solid var(--line);border-radius:6px;padding:6px 8px;background:#fff;font-size:13px}
+.op{display:flex;align-items:center;gap:6px;background:var(--amberbg);border:1px solid #fcd34d;border-radius:8px;padding:4px 10px;font-size:13px}
+.op.ok{background:var(--greenbg);border-color:#6ee7b7}
+.op b{font-weight:700}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:20px;padding:4px 12px;font-size:12.5px}
+.chip.on{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:700}
+input.q{border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:13px;width:260px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.card h2{font-size:15px;margin:0 0 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card h2 .sub{font-weight:400;color:var(--sub);font-size:12px}
+.card h2 .sp{flex:1}
+.card.warn{border-color:#fca5a5;background:#fff7f7}
+.dup{border-left:4px solid var(--red);padding:6px 10px;margin:6px 0;background:#fff;border-radius:4px}
+.dup .t{font-weight:700}
+.dup .l{font-size:12.5px;color:var(--sub);margin-top:2px}
+.dup .l span{display:inline-block;margin-right:12px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f3f4f6;font-weight:600;color:#374151;font-size:12px;position:sticky;top:0;white-space:nowrap}
+tr:hover td{background:#f8fafc}
+td.nw{white-space:nowrap}
+td.sub{color:var(--sub);font-size:12px}
+.tw{overflow:auto;max-height:72vh}
+.tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;line-height:1.6;vertical-align:middle;white-space:nowrap}
+.c-FAX{background:var(--bluebg);color:#1e40af}.c-メール{background:#ede9fe;color:#5b21b6}.c-LINE{background:var(--greenbg);color:#065f46}.c-電話{background:var(--amberbg);color:var(--amber)}.c-来店{background:#fce7f3;color:#9d174d}.c-その他{background:#eef0f3;color:#6b7280}
+.d-送{background:#fee2e2;color:#991b1b}.d-受{background:#e0f2fe;color:#075985}
+.t-gray{background:#eef0f3;color:#6b7280}
+.who{cursor:pointer;border-bottom:1px dashed #9ca3af}
+.who.none{color:var(--red);font-weight:600}
+.pl{cursor:pointer;color:var(--blue)}
+.pl:hover{text-decoration:underline}
+.snip{color:var(--sub);font-size:12px;max-width:520px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.subj{font-weight:600;max-width:520px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note{color:var(--sub);font-size:12px;line-height:1.7}
+.note b{color:var(--ink)}
+#gate{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:100}
+#gate.on{display:flex}
+.gbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px 24px;width:340px}
+.gbox h2{margin:0 0 12px;font-size:17px}
+.gbox input{width:100%;border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:4px 0 10px;font-size:14px}
+.gbox .err{color:var(--red);font-size:12.5px;min-height:18px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:90}
+.ov.show{display:flex}
+.md{background:#fff;border-radius:10px;padding:18px 20px;width:560px;max-width:96vw;max-height:92vh;overflow:auto}
+.md h3{margin:0 0 10px;font-size:16px}
+.fr{display:grid;grid-template-columns:110px 1fr;gap:8px 10px;align-items:center;margin-bottom:8px}
+.fr label{font-size:12.5px;color:var(--sub)}
+.fr input,.fr select,.fr textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font-size:13.5px}
+.fr textarea{min-height:80px;resize:vertical}
+.seg{display:flex;gap:4px}
+.seg button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;font-size:13px}
+.seg button.on{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:700}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#111827;color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;transition:.2s;pointer-events:none;z-index:200}
+.toast.show{opacity:1}
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12.5px;color:var(--sub)}
+.kpi b{font-size:16px;color:var(--ink);margin-right:2px}
+.hidden{display:none!important}
+@media (max-width:700px){.wrap{padding:8px}.snip,.subj{max-width:260px}input.q{width:100%}}
+</style>
+</head>
+<body>
+<div id="gate"><div class="gbox"><h2>🔐 やりとりログ ログイン</h2>
+<input id="gMail" type="email" placeholder="メールアドレス" autocomplete="username">
+<input id="gPass" type="password" placeholder="パスワード" autocomplete="current-password">
+<div class="err" id="gErr"></div><button class="btn pri" id="gBtn" style="width:100%">ログイン</button>
+<div class="note" style="margin-top:8px">他の社内ツールでログイン済みなら自動で入ります</div></div></div>
+
+<div class="wrap" id="app" style="display:none">
+  <div class="hdr">
+    <div class="logo">録</div>
+    <div><h1>やりとりログ</h1><div class="meta" id="meta">取引先ごとに「誰が・どの経路で・何の用件を」送受したかを一覧。重複連絡を防ぐ</div></div>
+    <div class="sp"></div>
+    <div class="op" id="opBox" title="このPCから送るFAX・発注に記録される名前。FAXデスク・発注デスクと共通">
+      <span>🖥 このPCの使用者:</span><select id="opSel" class="ctl"></select>
+    </div>
+    <button class="btn pri" id="addBtn">📞 電話・来店を記録</button>
+    <button class="btn" id="reloadBtn">🔄 更新</button>
+    <button class="btn" id="logoutBtn">ログアウト</button>
+  </div>
+
+  <div class="bar">
+    <input class="q" id="q" placeholder="取引先・番号・件名で検索">
+    <div class="chips" id="chCh"></div>
+    <div class="chips" id="chDir"></div>
+    <div class="chips" id="chWho"></div>
+    <select class="ctl" id="daysSel"><option value="7">7日</option><option value="14">14日</option><option value="30">30日</option><option value="45" selected>45日</option><option value="90">90日</option></select>
+    <label style="font-size:12.5px;color:var(--sub)"><input type="checkbox" id="onlyNoWho"> 担当が未設定の送信だけ</label>
+  </div>
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card warn" id="dupCard" style="display:none">
+    <h2>⚠ 重複連絡のおそれ <span class="sub">同じ取引先へ3日以内に2回以上「送信」があり、担当が違う（または不明）</span></h2>
+    <div id="dupList"></div>
+  </div>
+
+  <div class="card">
+    <h2>タイムライン <span class="sub" id="cnt"></span><span class="sp"></span><span class="sub">担当が空欄の行は「未設定」を押して誰が送ったか登録できます</span></h2>
+    <div class="tw"><table><thead><tr><th>日時</th><th>経路</th><th>送受</th><th>取引先</th><th>相手先・番号</th><th>担当</th><th>件名・内容</th><th>状態</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+  </div>
+  <div class="note">
+    <b>自動で拾うもの</b>: FAX送受信（FAXデスク）・発注（発注デスク）・メール送受信（info@ / 取引先マスタのメールに一致する受信）・公式LINEの受信。<b>手で記録するもの</b>: 電話・来店・LINEで返信した内容。<br>
+    <b>担当</b>: FAX・発注は「このPCの使用者」が自動で記録されます（FAXデスク・発注デスクにも同じ設定が出ます）。メールは誰が送ったか分からないので、あとから「未設定」を押して登録してください。
+  </div>
+</div>
+
+<div class="ov" id="mOv"><div class="md">
+  <h3 id="mTitle">📞 電話・来店を記録</h3>
+  <div class="fr">
+    <label>日時</label><input type="datetime-local" id="mDate">
+    <label>経路</label><div class="seg" id="mCh"><button data-v="電話" class="on">📞 電話</button><button data-v="来店">🏢 来店</button><button data-v="LINE">💬 LINE</button><button data-v="メール">📧 メール</button><button data-v="その他">その他</button></div>
+    <label>送受</label><div class="seg" id="mDir"><button data-v="送" class="on">こちらから連絡</button><button data-v="受">先方から連絡</button></div>
+    <label>取引先</label><input id="mPartner" list="plist" placeholder="社名（入力すると候補が出ます）" autocomplete="off"><datalist id="plist"></datalist>
+    <label>相手の担当者</label><input id="mContact" placeholder="○○様（任意）">
+    <label>こちらの担当</label><select id="mWho"></select>
+    <label>用件</label><input id="mSubject" placeholder="例: 2m無節の納期確認">
+    <label>内容・結果</label><textarea id="mBody" placeholder="話した内容・先方の回答・次にやること"></textarea>
+  </div>
+  <div id="mHint" class="note"></div>
+  <div class="acts"><button class="btn danger" id="mDel" style="margin-right:auto;display:none">削除</button><button class="btn" id="mCancel">キャンセル</button><button class="btn pri" id="mSave">保存</button></div>
+</div></div>
+
+<div class="ov" id="wOv"><div class="md" style="width:380px">
+  <h3>この連絡をしたのは誰ですか？</h3>
+  <div class="note" id="wInfo" style="margin-bottom:8px"></div>
+  <div class="seg" id="wSeg" style="flex-wrap:wrap"></div>
+  <div class="acts"><button class="btn" id="wCancel">キャンセル</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== 設定 ===== */
+const API="https://script.google.com/macros/s/AKfycbxQCf2HVfLjUAzOYXJHzzhquN3zkNrUAgcusg3mH5uhlm-UySsDYXBChhLjZGI2DyecIg/exec"; // fax-desk API（rl_* アクション）
+const CRED_KEY="renraku_cred", CACHE_KEY="renraku_cache_v1", DAYS_KEY="renraku_days", OP_KEY="hayazai_operator";
+const SSO_KEY="hayazai_sso_cred";
+const SSO_PEERS=["faxdesk_cred","hacchu_cred","hayazai_board_cred","hayazai_seiso_cred","hayazai_rulebook_cred","hayazai_kaizen_cred","notify_creds_v1","seinodesk_cred","orderdesk_cred","nippou_cred","ryoshu_cred","shikin_cred","uriageyoy_cred"];
+function ssoFind_(){ for(const k of [SSO_KEY].concat(SSO_PEERS)){ try{ const v=JSON.parse(localStorage.getItem(k)||"null"); if(v){ const email=v.email||v.e, pass=v.pass||v.p; if(email&&pass) return {email:String(email),pass:String(pass)}; } }catch(e){} } return null; }
+function ssoWrite(email,pass){ try{ localStorage.setItem(SSO_KEY,JSON.stringify({email,pass})); }catch(e){} }
+function creds(){ try{ const v=JSON.parse(localStorage.getItem(CRED_KEY)||"null"); if(v&&v.email&&v.pass) return v; }catch(e){} const s=ssoFind_(); if(s){ try{ localStorage.setItem(CRED_KEY,JSON.stringify(s)); }catch(e){} return s; } return {}; }
+function saveCreds(email,pass){ try{ localStorage.setItem(CRED_KEY,JSON.stringify({email,pass})); }catch(e){} ssoWrite(email,pass); }
+function clearCreds(){ try{ localStorage.removeItem(CRED_KEY); localStorage.removeItem(CACHE_KEY); localStorage.removeItem(SSO_KEY); }catch(e){} }
+
+/* ===== このPCの使用者（FAXデスク・発注デスクと共通キー） ===== */
+function operator(){ try{ const v=JSON.parse(localStorage.getItem(OP_KEY)||"null"); return (v&&v.name)||""; }catch(e){ return ""; } }
+function setOperator(name){ try{ localStorage.setItem(OP_KEY,JSON.stringify({name,setAt:Date.now()})); }catch(e){} renderOp(); }
+
+/* ===== ユーティリティ ===== */
+const $=id=>document.getElementById(id);
+function esc(s){ return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+let toastT=null; function toast(m,ms){ const t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),ms||2600); }
+async function getJ(params){ const c=creds(); const u=API+"?"+new URLSearchParams(Object.assign({email:c.email,pass:c.pass},params)).toString(); const r=await fetch(u); return await r.json(); }
+async function postJ(payload){ const c=creds(); const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({email:c.email,pass:c.pass},payload))}); return await r.json(); }
+function fmtTs(iso){ if(!iso) return "-"; const d=new Date(iso); if(isNaN(d)) return String(iso); const p=n=>String(n).padStart(2,"0"); const wd="日月火水木金土"[d.getDay()]; return `${d.getMonth()+1}/${d.getDate()}(${wd}) ${p(d.getHours())}:${p(d.getMinutes())}`; }
+function ago(iso){ const ms=Date.now()-new Date(iso).getTime(); const h=Math.floor(ms/3600000); if(h<1) return "1時間以内"; if(h<24) return h+"時間前"; const d=Math.floor(h/24); return d+"日前"; }
+function normName(s){ return String(s||"").replace(/[\s　]/g,"").replace(/株式会社|有限会社|\(株\)|（株）|㈱|\(有\)|（有）|㈲/g,"").replace(/[（）()]/g,"").toLowerCase(); }
+function toLocalInput(d){ const p=n=>String(n).padStart(2,"0"); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+
+/* ===== 状態 ===== */
+let DATA=null, STAFF=["大樹","潤也","楓","智恵子","その他"], PARTNERS=[];
+let F={ch:"all",dir:"all",who:"all",q:"",noWho:false};
+let DAYS=+localStorage.getItem(DAYS_KEY)||45;
+let EDIT=null; // 手動記録の編集対象
+
+/* ===== 起動（前回データ即表示 → 裏で最新取得） ===== */
+async function boot(){
+  const c=creds(); if(!(c.email&&c.pass)){ showGate(); return; }
+  $("gate").classList.remove("on"); $("app").style.display="";
+  $("daysSel").value=String(DAYS);
+  renderOp(); renderChips();
+  let cache=null; try{ cache=JSON.parse(localStorage.getItem(CACHE_KEY)||"null"); }catch(e){}
+  if(cache&&cache.rows&&cache.days===DAYS){ DATA=cache; if(cache.staff) STAFF=cache.staff; render(); $("meta").textContent="前回取得分を表示中（最新を取得しています…）"; }
+  fetchAll();
+  loadPartners();
+}
+function showGate(err){ $("app").style.display="none"; $("gate").classList.add("on"); $("gErr").textContent=err||""; setTimeout(()=>$("gMail").focus(),50); }
+$("gBtn").onclick=async()=>{
+  const email=$("gMail").value.trim().toLowerCase(), pass=$("gPass").value;
+  if(!email||!pass){ $("gErr").textContent="メールとパスワードを入力してください"; return; }
+  $("gErr").textContent="確認中…";
+  try{ const r=await fetch(API+"?"+new URLSearchParams({action:"rl_staff",email,pass})); const d=await r.json();
+    if(d&&d.ok){ saveCreds(email,pass); $("gErr").textContent=""; boot(); }
+    else $("gErr").textContent="メールまたはパスワードが違います";
+  }catch(e){ $("gErr").textContent="接続エラー。通信環境を確認してください"; }
+};
+["gMail","gPass"].forEach(id=>$(id).addEventListener("keydown",e=>{ if(e.key==="Enter") $("gBtn").click(); }));
+$("logoutBtn").onclick=()=>{ clearCreds(); location.reload(); };
+$("reloadBtn").onclick=()=>fetchAll(true);
+$("daysSel").onchange=()=>{ DAYS=+$("daysSel").value; localStorage.setItem(DAYS_KEY,String(DAYS)); fetchAll(); };
+
+async function fetchAll(force){
+  $("meta").textContent="最新を取得しています…（メールの走査に数十秒かかることがあります）";
+  $("reloadBtn").disabled=true;
+  try{
+    const d=await getJ({action:"rl_timeline",days:DAYS,nocache:force?"1":"0"});
+    if(!d||!d.ok){ if(d&&(d.error==="unauthorized"||d.error==="auth")){ clearCreds(); showGate("ログインの有効期限が切れました。もう一度ログインしてください"); } else $("meta").textContent="取得エラー: "+(d&&d.error||"不明"); return; }
+    DATA=d; STAFF=d.staff||STAFF;
+    try{ localStorage.setItem(CACHE_KEY,JSON.stringify(d)); }catch(e){}
+    render();
+    $("meta").textContent="取得 "+fmtTs(d.fetchedAt)+"（"+d.days+"日分・"+d.rows.length+"件）";
+  }catch(e){ $("meta").textContent="接続エラー: "+e; }
+  $("reloadBtn").disabled=false;
+}
+async function loadPartners(){
+  try{ const d=await getJ({action:"partners"}); if(d&&d.partners){ PARTNERS=d.partners; $("plist").innerHTML=PARTNERS.map(p=>`<option value="${esc(p.name)}">`).join(""); } }catch(e){}
+}
+
+/* ===== 使用者 ===== */
+function renderOp(){
+  const cur=operator();
+  const opts=[`<option value="">（未設定）</option>`].concat(STAFF.map(s=>`<option value="${esc(s)}"${s===cur?" selected":""}>${esc(s)}</option>`));
+  $("opSel").innerHTML=opts.join("");
+  $("opBox").classList.toggle("ok",!!cur);
+}
+$("opSel").onchange=()=>{ setOperator($("opSel").value); if($("opSel").value) toast("このPCの使用者を「"+$("opSel").value+"」にしました。FAXデスク・発注デスクの送信に記録されます",3800); };
+
+/* ===== フィルタ ===== */
+function renderChips(){
+  const mk=(id,items,cur,key)=>{ $(id).innerHTML=items.map(it=>`<span class="chip${it.v===cur?" on":""}" data-k="${key}" data-v="${esc(it.v)}">${esc(it.l)}</span>`).join(""); };
+  mk("chCh",[{v:"all",l:"すべて"},{v:"FAX",l:"FAX"},{v:"メール",l:"メール"},{v:"LINE",l:"LINE"},{v:"電話",l:"電話"},{v:"来店",l:"来店"}],F.ch,"ch");
+  mk("chDir",[{v:"all",l:"送受"},{v:"送",l:"送信のみ"},{v:"受",l:"受信のみ"}],F.dir,"dir");
+  const whos=[{v:"all",l:"担当:全員"}].concat(STAFF.map(s=>({v:s,l:s}))).concat([{v:"",l:"未設定"}]);
+  mk("chWho",whos,F.who,"who");
+}
+document.addEventListener("click",e=>{ const c=e.target.closest(".chip"); if(!c) return; F[c.dataset.k]=c.dataset.v; renderChips(); render(); });
+$("q").oninput=()=>{ F.q=$("q").value.trim().toLowerCase(); render(); };
+$("onlyNoWho").onchange=()=>{ F.noWho=$("onlyNoWho").checked; render(); };
+document.addEventListener("click",e=>{ const p=e.target.closest(".pl"); if(!p) return; $("q").value=p.dataset.p; F.q=p.dataset.p.toLowerCase(); render(); window.scrollTo({top:0,behavior:"smooth"}); });
+
+/* ===== 描画 ===== */
+function filtered(){
+  if(!DATA) return [];
+  return DATA.rows.filter(r=>{
+    if(r.src==="sys") return true;
+    if(F.ch!=="all"&&r.channel!==F.ch) return false;
+    if(F.dir!=="all"&&r.dir!==F.dir) return false;
+    if(F.who!=="all"&&(r.who||"")!==F.who) return false;
+    if(F.noWho&&!(r.dir==="送"&&!r.who)) return false;
+    if(F.q){ const hay=(r.partner+" "+r.contact+" "+r.subject+" "+r.snippet+" "+r.who).toLowerCase(); if(hay.indexOf(F.q)<0) return false; }
+    return true;
+  });
+}
+function dupGroups(rows){
+  // 送信のみ・取引先ごとに時刻順。3日(72h)以内の送信ペアで担当が違う or どちらか不明 → グループ化
+  const by={};
+  rows.filter(r=>r.dir==="送"&&r.partner&&r.src!=="sys").forEach(r=>{ const k=normName(r.partner); (by[k]=by[k]||[]).push(r); });
+  const out=[];
+  Object.keys(by).forEach(k=>{
+    const arr=by[k].slice().sort((a,b)=>String(a.ts).localeCompare(String(b.ts)));
+    let g=[];
+    const flush=()=>{ if(g.length>=2){ const whos=new Set(g.map(x=>x.who||"?")); if(whos.size>=2||whos.has("?")) out.push(g); } g=[]; };
+    for(const r of arr){
+      if(g.length&&new Date(r.ts)-new Date(g[g.length-1].ts)>72*3600000) flush();
+      g.push(r);
+    }
+    flush();
+  });
+  out.sort((a,b)=>String(b[b.length-1].ts).localeCompare(String(a[a.length-1].ts)));
+  return out;
+}
+function whoCell(r){
+  if(r.src==="sys") return "";
+  const w=r.who||"";
+  const cls="who"+(w?"":" none");
+  const label=w||"未設定";
+  return `<span class="${cls}" data-key="${esc(r.src+":"+r.id)}" data-desc="${esc(fmtTs(r.ts)+" "+r.channel+" "+r.dir+" → "+r.partner+" / "+r.subject)}" title="押すと担当を変更">${esc(label)}</span>`;
+}
+function render(){
+  const rows=filtered();
+  const all=DATA?DATA.rows:[];
+  const sent=all.filter(r=>r.dir==="送"&&r.src!=="sys");
+  const noWho=sent.filter(r=>!r.who).length;
+  const dups=dupGroups(all.filter(r=>DAYS<=14||Date.now()-new Date(r.ts)<14*86400000));
+  $("kpis").innerHTML=`<div class="kpi"><b>${all.length}</b>件</div><div class="kpi">送信 <b>${sent.length}</b></div><div class="kpi">受信 <b>${all.length-sent.length-all.filter(r=>r.src==="sys").length}</b></div><div class="kpi">担当未設定の送信 <b class="${noWho?"":""}" style="${noWho?"color:var(--red)":""}">${noWho}</b></div><div class="kpi">重複のおそれ <b style="${dups.length?"color:var(--red)":""}">${dups.length}</b>組（直近14日）</div>`;
+  // 重複
+  if(dups.length){
+    $("dupCard").style.display="";
+    $("dupList").innerHTML=dups.slice(0,20).map(g=>{
+      const p=g[0].partner;
+      return `<div class="dup"><div class="t"><span class="pl" data-p="${esc(p)}">${esc(p)}</span> <span class="tag t-gray">${g.length}回</span></div><div class="l">${g.map(r=>`<span>${esc(fmtTs(r.ts))} <span class="tag c-${esc(r.channel)}">${esc(r.channel)}</span> ${whoCell(r)}「${esc(r.subject||"（件名なし）")}」</span>`).join("")}</div></div>`;
+    }).join("");
+  } else $("dupCard").style.display="none";
+  // 表
+  $("cnt").textContent=rows.length+"件表示";
+  $("tb").innerHTML=rows.map(r=>{
+    if(r.src==="sys") return `<tr><td class="nw">${esc(fmtTs(r.ts))}</td><td colspan="8" style="color:var(--red)">${esc(r.subject)}: ${esc(r.snippet)}</td></tr>`;
+    const link=r.link?`<a href="${esc(r.link)}" target="_blank" rel="noopener" title="元を開く">↗</a>`:"";
+    const edit=r.editable?`<button class="btn" style="padding:2px 8px;font-size:12px" data-edit="${esc(r.id)}">✏️</button>`:"";
+    return `<tr>
+      <td class="nw">${esc(fmtTs(r.ts))}<div class="sub">${esc(ago(r.ts))}</div></td>
+      <td class="nw"><span class="tag c-${esc(r.channel)}">${esc(r.channel)}</span>${r.tag?` <span class="tag t-gray">${esc(r.tag)}</span>`:""}</td>
+      <td class="nw"><span class="tag d-${esc(r.dir)}">${esc(r.dir)}</span></td>
+      <td>${r.partner?`<span class="pl" data-p="${esc(r.partner)}">${esc(r.partner)}</span>`:`<span class="sub">（未登録）</span>`}</td>
+      <td class="sub">${esc(r.contact)}</td>
+      <td class="nw">${whoCell(r)}</td>
+      <td><div class="subj" title="${esc(r.subject)}">${esc(r.subject||"（件名なし）")}</div><div class="snip" title="${esc(r.snippet)}">${esc(r.snippet)}</div></td>
+      <td class="nw sub">${esc(r.status)}</td>
+      <td class="nw">${edit} ${link}</td></tr>`;
+  }).join("")||`<tr><td colspan="9" class="sub">該当なし</td></tr>`;
+}
+
+/* ===== 担当の後付け ===== */
+let WKEY=null;
+document.addEventListener("click",e=>{
+  const w=e.target.closest(".who"); if(!w) return;
+  WKEY=w.dataset.key; $("wInfo").textContent=w.dataset.desc;
+  $("wSeg").innerHTML=STAFF.concat(["自動(納品書)","Claude","（空欄に戻す）"]).map(s=>`<button data-w="${esc(s==="（空欄に戻す）"?"":s)}">${esc(s)}</button>`).join("");
+  $("wOv").classList.add("show");
+});
+$("wSeg").onclick=async e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  const who=b.dataset.w; $("wOv").classList.remove("show");
+  const [src,id]=WKEY.split(/:(.*)/);
+  if(src==="manual"){ const r=await postJ({action:"rl_edit",id,who}); if(!r.ok){ toast("保存失敗: "+(r.error||"")); return; } }
+  else { const r=await postJ({action:"rl_setwho",key:WKEY,who}); if(!r.ok){ toast("保存失敗: "+(r.error||"")); return; } }
+  DATA.rows.forEach(r=>{ if(r.src+":"+r.id===WKEY) r.who=who; }); try{ localStorage.setItem(CACHE_KEY,JSON.stringify(DATA)); }catch(_){}
+  render(); toast(who?"担当を「"+who+"」にしました":"担当を空欄にしました");
+};
+$("wCancel").onclick=()=>$("wOv").classList.remove("show");
+
+/* ===== 手動記録（電話・来店など） ===== */
+function segVal(id){ const b=$(id).querySelector("button.on"); return b?b.dataset.v:""; }
+function segSet(id,v){ $(id).querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v===v)); }
+["mCh","mDir"].forEach(id=>$(id).onclick=e=>{ const b=e.target.closest("button"); if(b) segSet(id,b.dataset.v); });
+function openManual(r){
+  EDIT=r||null;
+  $("mTitle").textContent=r?"✏️ 記録を編集":"📞 電話・来店を記録";
+  $("mDate").value=toLocalInput(r?new Date(r.ts):new Date());
+  segSet("mCh",r?r.channel:"電話"); segSet("mDir",r?r.dir:"送");
+  $("mPartner").value=r?r.partner:""; $("mContact").value=r?r.contact:""; $("mSubject").value=r?r.subject:""; $("mBody").value=r?r.snippet:"";
+  const cur=r?r.who:operator();
+  $("mWho").innerHTML=[`<option value="">（未設定）</option>`].concat(STAFF.map(s=>`<option value="${esc(s)}"${s===cur?" selected":""}>${esc(s)}</option>`)).join("");
+  $("mDel").style.display=r?"":"none";
+  $("mHint").textContent=operator()?"":"※ 右上「このPCの使用者」を設定しておくと担当が自動で入ります";
+  $("mOv").classList.add("show"); setTimeout(()=>$("mPartner").focus(),50);
+}
+$("addBtn").onclick=()=>openManual(null);
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-edit]"); if(!b) return; const r=DATA.rows.find(x=>x.src==="manual"&&x.id===b.dataset.edit); if(r) openManual(r); });
+$("mCancel").onclick=()=>$("mOv").classList.remove("show");
+$("mPartner").addEventListener("change",()=>{ const p=PARTNERS.find(x=>x.name===$("mPartner").value); if(p&&p.tel&&!$("mContact").value) $("mContact").placeholder="TEL "+p.tel; });
+$("mSave").onclick=async()=>{
+  const partner=$("mPartner").value.trim(); if(!partner){ toast("取引先を入力してください"); $("mPartner").focus(); return; }
+  const payload={date:new Date($("mDate").value).toISOString(),channel:segVal("mCh"),dir:segVal("mDir"),partner,contact:$("mContact").value.trim(),who:$("mWho").value,subject:$("mSubject").value.trim(),body:$("mBody").value.trim(),days:DAYS};
+  $("mSave").disabled=true;
+  try{
+    const r=EDIT?await postJ(Object.assign({action:"rl_edit",id:EDIT.id},payload)):await postJ(Object.assign({action:"rl_add",createdBy:operator()},payload));
+    if(!r.ok){ toast("保存失敗: "+(r.error||"")); $("mSave").disabled=false; return; }
+    $("mOv").classList.remove("show");
+    const ev={src:"manual",id:EDIT?EDIT.id:r.id,ts:payload.date,channel:payload.channel,dir:payload.dir,partner,contact:payload.contact,who:payload.who,subject:payload.subject,snippet:payload.body,status:"",tag:"",link:"",editable:true};
+    if(EDIT){ const i=DATA.rows.findIndex(x=>x.src==="manual"&&x.id===EDIT.id); if(i>=0) DATA.rows[i]=ev; } else DATA.rows.unshift(ev);
+    DATA.rows.sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));
+    try{ localStorage.setItem(CACHE_KEY,JSON.stringify(DATA)); }catch(_){}
+    render(); toast(EDIT?"更新しました":"記録しました");
+  }catch(e){ toast("保存失敗: "+e); }
+  $("mSave").disabled=false;
+};
+$("mDel").onclick=async()=>{
+  if(!EDIT||!confirm("この記録を削除しますか？")) return;
+  const r=await postJ({action:"rl_del",id:EDIT.id}); if(!r.ok){ toast("削除失敗: "+(r.error||"")); return; }
+  DATA.rows=DATA.rows.filter(x=>!(x.src==="manual"&&x.id===EDIT.id)); try{ localStorage.setItem(CACHE_KEY,JSON.stringify(DATA)); }catch(_){}
+  $("mOv").classList.remove("show"); render(); toast("削除しました");
+};
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ $("mOv").classList.remove("show"); $("wOv").classList.remove("show"); } });
+
+boot();
+</script>
+</body>
+</html>
