@@ -127,7 +127,7 @@ td.sub{color:var(--sub);font-size:12px}
   <div class="kpis" id="kpis"></div>
 
   <div class="card warn" id="dupCard" style="display:none">
-    <h2>⚠ 重複連絡のおそれ <span class="sub">同じ取引先へ3日以内に2回以上「送信」があり、担当が違う（または不明）</span></h2>
+    <h2>⚠ 重複連絡のおそれ <span class="sub">同じ取引先へ3日以内に2回以上「送信」があり、担当が別人／担当不明で用件が似ている。同じ人の続報なら「未設定」を押して担当を登録すると消えます</span></h2>
     <div id="dupList"></div>
   </div>
 
@@ -277,15 +277,29 @@ function filtered(){
     return true;
   });
 }
+// 件名の似ている度（2文字組の重なり）。Re:や添付名のノイズは落とす
+function subjKey(s){ return String(s||"").replace(/^(re|fw|fwd)[:：]\s*/gi,"").replace(/^(re|fw|fwd)[:：]\s*/gi,"").replace(/添付:\s*/,"").replace(/\d{8}_?|\.pdf|\.xlsx?|\.docx?/gi,"").replace(/[\s　【】\[\]（）()「」]/g,"").toLowerCase(); }
+function bigrams(s){ const o=new Set(); for(let i=0;i<s.length-1;i++) o.add(s.slice(i,i+2)); return o; }
+function similar(a,b){ a=subjKey(a); b=subjKey(b); if(!a||!b) return false; if(a===b||a.indexOf(b)>=0||b.indexOf(a)>=0) return true; const A=bigrams(a),B=bigrams(b); let n=0; A.forEach(x=>{ if(B.has(x)) n++; }); return n/Math.min(A.size,B.size)>=0.6; }
+const DUP_IGNORE=/出荷一覧表|集荷依頼|送り状|請求書|納品書|領収書|受領印/;   // 毎日の定型送付は重複扱いしない
 function dupGroups(rows){
-  // 送信のみ・取引先ごとに時刻順。3日(72h)以内の送信ペアで担当が違う or どちらか不明 → グループ化
+  // 送信のみ・取引先ごとに時刻順。3日(72h)以内に2回以上送っていて、
+  //   (a) 担当が判明していて別人 → 重複のおそれ
+  //   (b) 担当が不明で、用件(件名)が似ている → 重複のおそれ（同じ人の続報かもしれないので担当を登録して消す）
   const by={};
-  rows.filter(r=>r.dir==="送"&&r.partner&&r.src!=="sys").forEach(r=>{ const k=normName(r.partner); (by[k]=by[k]||[]).push(r); });
+  rows.filter(r=>r.dir==="送"&&r.partner&&r.src!=="sys"&&!DUP_IGNORE.test(r.subject)&&!/^自動/.test(r.who||"")).forEach(r=>{ const k=normName(r.partner); (by[k]=by[k]||[]).push(r); });
   const out=[];
   Object.keys(by).forEach(k=>{
     const arr=by[k].slice().sort((a,b)=>String(a.ts).localeCompare(String(b.ts)));
     let g=[];
-    const flush=()=>{ if(g.length>=2){ const whos=new Set(g.map(x=>x.who||"?")); if(whos.size>=2||whos.has("?")) out.push(g); } g=[]; };
+    const judge=g=>{
+      const known=new Set(g.map(x=>x.who).filter(Boolean));
+      if(known.size>=2) return true;
+      const unk=g.filter(x=>!x.who); if(!unk.length) return false;
+      for(let i=0;i<g.length;i++) for(let j=i+1;j<g.length;j++){ if((!g[i].who||!g[j].who)&&(g[i].who!==g[j].who||!g[i].who)&&similar(g[i].subject,g[j].subject)) return true; }
+      return false;
+    };
+    const flush=()=>{ if(g.length>=2&&judge(g)) out.push(g); g=[]; };
     for(const r of arr){
       if(g.length&&new Date(r.ts)-new Date(g[g.length-1].ts)>72*3600000) flush();
       g.push(r);
@@ -297,6 +311,7 @@ function dupGroups(rows){
 }
 function whoCell(r){
   if(r.src==="sys") return "";
+  if(r.dir==="受"&&r.src!=="manual") return `<span class="sub">－</span>`;
   const w=r.who||"";
   const cls="who"+(w?"":" none");
   const label=w||"未設定";
