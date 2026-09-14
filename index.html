@@ -397,6 +397,25 @@ $("mCancel").onclick=()=>$("mOv").classList.remove("show");
 $("mPartner").addEventListener("change",()=>{ const p=PARTNERS.find(x=>x.name===$("mPartner").value); if(p&&p.tel&&!$("mContact").value) $("mContact").placeholder="TEL "+p.tel; });
 $("mSave").onclick=async()=>{
   const partner=$("mPartner").value.trim(); if(!partner){ toast("取引先を入力してください"); $("mPartner").focus(); return; }
+  // ── 保存前のうっかり確認（根拠が無ければ従来どおり通す） ──
+  // (a) 取引先マスタに無い名前 → 近い名前を最大3件出して確認
+  if(PARTNERS.length&&!PARTNERS.some(p=>normName(p.name)===normName(partner))){
+    const near=PARTNERS.filter(p=>similar(normName(p.name),normName(partner))).slice(0,3).map(p=>p.name);
+    if(!confirm("⚠️ 取引先マスタに無い名前です。"+(near.length?"近い名前: "+near.join("、")+"。":"")+"このまま保存しますか？")){ $("mPartner").focus(); return; }
+  }
+  // (b) 送信の記録で、同じ取引先へ72時間以内に送信があれば重複のおそれ（定型送付・自動送信は除く）
+  if(segVal("mDir")==="送"&&DATA){
+    const ts=new Date($("mDate").value).getTime();
+    const prev=DATA.rows.filter(r=>r.dir==="送"&&r.src!=="sys"&&r.partner&&normName(r.partner)===normName(partner)
+      &&!(EDIT&&r.src==="manual"&&r.id===EDIT.id)&&!DUP_IGNORE.test(r.subject||"")&&!/^自動/.test(r.who||"")
+      &&Math.abs(ts-new Date(r.ts).getTime())<=72*3600000).sort((a,b)=>String(b.ts).localeCompare(String(a.ts)))[0];
+    if(prev){
+      const h=Math.round(Math.abs(ts-new Date(prev.ts).getTime())/3600000);
+      if(!confirm(`⚠️ この取引先へ ${h<1?"1時間以内":h+"時間前"}に ${prev.who||"担当不明"}さんが『${prev.subject||"（件名なし）"}』で連絡しています。重複していませんか？`)) return;
+    }
+  }
+  // (c) 担当が未設定
+  if(!$("mWho").value&&!confirm("担当が未設定のまま保存しますか？")){ $("mWho").focus(); return; }
   const payload={date:new Date($("mDate").value).toISOString(),channel:segVal("mCh"),dir:segVal("mDir"),partner,contact:$("mContact").value.trim(),who:$("mWho").value,subject:$("mSubject").value.trim(),body:$("mBody").value.trim(),days:DAYS};
   $("mSave").disabled=true;
   try{
